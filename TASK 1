@@ -1,0 +1,115 @@
+TO DO A LIST APPLICATION
+Description: Develop a command-line to-do list application that allows users to manage tasks.
+
+Features:
+
+Task Management: Allow users to add, remove, and mark tasks as completed.
+Task Priority: Implement a priority system for tasks (e.g., high, medium, low).
+Due Dates: Enable users to set due dates for tasks.
+List View: Display tasks in a list with their details.
+Data Persistence: Store tasks in a file/database for persistence across sessions.
+Tech Stack:
+
+Python
+File handling or a simple database library
+
+CODE:-
+
+
+
+import os
+import datetime
+
+# Function to clear the screen
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+# Function to display the menu
+def display_menu():
+    clear_screen()
+    print("===== To-Do List Application =====")
+    print("1. Add Task")
+    print("2. Remove Task")
+    print("3. Mark Task as Completed")
+    print("4. View Tasks")
+    print("5. Exit")
+
+# Function to add a task
+def add_task(tasks):
+    task_name = input("Enter task name: ")
+    priority = input("Enter priority (High/Medium/Low): ")
+    due_date = input("Enter due date (YYYY-MM-DD): ")
+    tasks.append({"name": task_name, "priority": priority, "due_date": due_date, "completed": False})
+    save_tasks(tasks)
+    print("Task added successfully!")
+
+# Function to remove a task
+def remove_task(tasks):
+    task_index = int(input("Enter task number to remove: ")) - 1
+    if 0 <= task_index < len(tasks):
+        del tasks[task_index]
+        save_tasks(tasks)
+        print("Task removed successfully!")
+    else:
+        print("Invalid task number!")
+
+# Function to mark a task as completed
+def mark_completed(tasks):
+    task_index = int(input("Enter task number to mark as completed: ")) - 1
+    if 0 <= task_index < len(tasks):
+        tasks[task_index]["completed"] = True
+        save_tasks(tasks)
+        print("Task marked as completed successfully!")
+    else:
+        print("Invalid task number!")
+
+# Function to display tasks
+def view_tasks(tasks):
+    clear_screen()
+    if len(tasks) == 0:
+        print("No tasks found!")
+    else:
+        print("===== Tasks =====")
+        for i, task in enumerate(tasks, 1):
+            status = "Completed" if task["completed"] else "Not Completed"
+            print(f"{i}. {task['name']} - Priority: {task['priority']}, Due Date: {task['due_date']}, Status: {status}")
+    input("Press Enter to continue...")
+
+# Function to save tasks to a file
+def save_tasks(tasks):
+    with open("tasks.txt", "w") as f:
+        for task in tasks:
+            f.write(f"{task['name']},{task['priority']},{task['due_date']},{task['completed']}\n")
+
+# Function to load tasks from a file
+def load_tasks():
+    tasks = []
+    if os.path.exists("tasks.txt"):
+        with open("tasks.txt", "r") as f:
+            for line in f:
+                name, priority, due_date, completed = line.strip().split(",")
+                tasks.append({"name": name, "priority": priority, "due_date": due_date, "completed": completed == "True"})
+    return tasks
+
+# Main function
+def main():
+    tasks = load_tasks()
+    while True:
+        display_menu()
+        choice = input("Enter your choice: ")
+        if choice == "1":
+            add_task(tasks)
+        elif choice == "2":
+            remove_task(tasks)
+        elif choice == "3":
+            mark_completed(tasks)
+        elif choice == "4":
+            view_tasks(tasks)
+        elif choice == "5":
+            print("Thank you for using the To-Do List Application!")
+            break
+        else:
+            print("Invalid choice! Please try again.")
+
+if __name__ == "__main__":
+    main()
